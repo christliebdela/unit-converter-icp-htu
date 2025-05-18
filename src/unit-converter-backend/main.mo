@@ -2,6 +2,7 @@ import Array "mo:base/Array";
 import Float "mo:base/Float";
 import Text "mo:base/Text";
 import Debug "mo:base/Debug";
+import Char "mo:base/Char";
 
 actor UnitConverter {
   // Unit data structure
@@ -208,11 +209,12 @@ actor UnitConverter {
 
   // Validate if input value is a valid number
   public query func validateInput(valueText: Text) : async Bool {
-    try {
-      let _ = Float.fromText(valueText);
-      return true;
-    } catch (e) {
+  for (char in valueText.chars()) {
+    if (not (Char.isDigit(char) or char == '.' or char == '-' or char == 'e' or char == 'E' or char == '+')) {
       return false;
     };
   };
-}
+  
+  return valueText.size() > 0;
+  };
+};
