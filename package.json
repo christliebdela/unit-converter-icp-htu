@@ -1,11 +1,12 @@
 {
   "name": "unit-converter",
+  "version": "0.1.0",
   "type": "module",
   "private": true,
   "scripts": {
     "start": "npm run start --workspaces --if-present",
-    "prebuild": "npm run prebuild --workspaces --if-present",
-    "build": "npm run build --workspaces --if-present",
+    "prebuild": "echo 'Running prebuild script'",
+    "build": "webpack",
     "test": "npm test --workspaces --if-present"
   },
   "engines": {
@@ -14,5 +15,27 @@
   },
   "workspaces": [
     "packages/frontend"
-  ]
+  ],
+  "description": "Welcome to your new `unit-converter` project and to the Internet Computer development community. By default, creating a new project adds this README and some template files to your project directory. You can edit these template files to customize your project and to include your own code to speed up the development cycle.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/christliebdela/unit-converter-icp-htu.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/christliebdela/unit-converter-icp-htu/issues"
+  },
+  "homepage": "https://github.com/christliebdela/unit-converter-icp-htu#readme",
+  "dependencies": {
+    "@dfinity/agent": "^0.15.6",
+    "@dfinity/candid": "^0.15.6",
+    "@dfinity/principal": "^0.15.6"
+  },
+  "devDependencies": {
+    "webpack": "^5.88.0",
+    "webpack-cli": "^5.1.4"
+  }
 }

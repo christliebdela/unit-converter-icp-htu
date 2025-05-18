@@ -5,16 +5,20 @@ import Debug "mo:base/Debug";
 import Char "mo:base/Char";
 
 actor UnitConverter {
-  // Unit data structure
+  /* 
+   Unit data structure that defines measurement units with their conversion properties.
+   Contains name, abbreviation, and conversion factors.
+   Offset is primarily used for temperature conversions.
+  */
   type Unit = {
     name: Text;
     abbreviation: Text;
-    toBase: Float; // Conversion factor to base unit
-    fromBase: Float; // Conversion factor from base unit
-    offset: Float; // For units like temperature that need an offset
+    toBase: Float;
+    fromBase: Float;
+    offset: Float;
   };
 
-  // Unit definitions for each category
+  /* Unit definitions for each measurement category */
   let lengthUnits : [Unit] = [
     { name = "Meter"; abbreviation = "m"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Kilometer"; abbreviation = "km"; toBase = 1000.0; fromBase = 0.001; offset = 0.0 },
@@ -26,6 +30,7 @@ actor UnitConverter {
     { name = "Mile"; abbreviation = "mi"; toBase = 1609.34; fromBase = 0.000621371; offset = 0.0 },
   ];
 
+  /* Mass measurement units with conversion factors */
   let massUnits : [Unit] = [
     { name = "Kilogram"; abbreviation = "kg"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Gram"; abbreviation = "g"; toBase = 0.001; fromBase = 1000.0; offset = 0.0 },
@@ -35,12 +40,14 @@ actor UnitConverter {
     { name = "Ton"; abbreviation = "t"; toBase = 1000.0; fromBase = 0.001; offset = 0.0 },
   ];
 
+  /* Temperature measurement units - these require special conversion formulas */
   let temperatureUnits : [Unit] = [
     { name = "Celsius"; abbreviation = "°C"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
-    { name = "Fahrenheit"; abbreviation = "°F"; toBase = 1.0; fromBase = 1.0; offset = 0.0 }, // Special conversion needed
+    { name = "Fahrenheit"; abbreviation = "°F"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Kelvin"; abbreviation = "K"; toBase = 1.0; fromBase = 1.0; offset = 273.15 },
   ];
 
+  /* Time measurement units with conversion factors */
   let timeUnits : [Unit] = [
     { name = "Second"; abbreviation = "s"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Minute"; abbreviation = "min"; toBase = 60.0; fromBase = 1.0/60.0; offset = 0.0 },
@@ -49,6 +56,7 @@ actor UnitConverter {
     { name = "Week"; abbreviation = "wk"; toBase = 604800.0; fromBase = 1.0/604800.0; offset = 0.0 },
   ];
 
+  /* Speed measurement units with conversion factors */
   let speedUnits : [Unit] = [
     { name = "Meters per second"; abbreviation = "m/s"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Kilometers per hour"; abbreviation = "km/h"; toBase = 0.277778; fromBase = 3.6; offset = 0.0 },
@@ -57,6 +65,7 @@ actor UnitConverter {
     { name = "Knot"; abbreviation = "kn"; toBase = 0.514444; fromBase = 1.94384; offset = 0.0 },
   ];
 
+  /* Area measurement units with conversion factors */
   let areaUnits : [Unit] = [
     { name = "Square meter"; abbreviation = "m²"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Square kilometer"; abbreviation = "km²"; toBase = 1000000.0; fromBase = 0.000001; offset = 0.0 },
@@ -66,6 +75,7 @@ actor UnitConverter {
     { name = "Hectare"; abbreviation = "ha"; toBase = 10000.0; fromBase = 0.0001; offset = 0.0 },
   ];
 
+  /* Volume measurement units with conversion factors */
   let volumeUnits : [Unit] = [
     { name = "Cubic meter"; abbreviation = "m³"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Liter"; abbreviation = "L"; toBase = 0.001; fromBase = 1000.0; offset = 0.0 },
@@ -74,6 +84,7 @@ actor UnitConverter {
     { name = "Fluid ounce (US)"; abbreviation = "fl oz"; toBase = 0.0000295735; fromBase = 33814.0; offset = 0.0 },
   ];
 
+  /* Energy measurement units with conversion factors */
   let energyUnits : [Unit] = [
     { name = "Joule"; abbreviation = "J"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Kilojoule"; abbreviation = "kJ"; toBase = 1000.0; fromBase = 0.001; offset = 0.0 },
@@ -83,6 +94,7 @@ actor UnitConverter {
     { name = "Kilowatt-hour"; abbreviation = "kWh"; toBase = 3600000.0; fromBase = 2.77778e-7; offset = 0.0 },
   ];
 
+  /* Pressure measurement units with conversion factors */
   let pressureUnits : [Unit] = [
     { name = "Pascal"; abbreviation = "Pa"; toBase = 1.0; fromBase = 1.0; offset = 0.0 },
     { name = "Kilopascal"; abbreviation = "kPa"; toBase = 1000.0; fromBase = 0.001; offset = 0.0 },
@@ -91,12 +103,12 @@ actor UnitConverter {
     { name = "Pound per square inch"; abbreviation = "psi"; toBase = 6894.76; fromBase = 0.000145038; offset = 0.0 },
   ];
 
-  // Function to get all unit categories
+  /* Returns a list of all available unit categories */
   public query func getUnitCategories() : async [Text] {
     return ["Length", "Mass", "Temperature", "Time", "Speed", "Area", "Volume", "Energy", "Pressure"];
   };
 
-  // Function to get units for a specific category
+  /* Returns all units available in a specific category */
   public query func getUnits(category: Text) : async [Text] {
     switch (category) {
       case "Length" { Array.map<Unit, Text>(lengthUnits, func(unit) { unit.name }) };
@@ -112,7 +124,7 @@ actor UnitConverter {
     };
   };
 
-  // Helper function to find a unit in an array
+  /* Locates a specific unit by name in an array of units */
   private func findUnit(units: [Unit], unitName: Text) : ?Unit {
     for (unit in units.vals()) {
       if (unit.name == unitName) {
@@ -122,9 +134,8 @@ actor UnitConverter {
     return null;
   };
 
-  // Convert temperature (special case)
+  /* Handles temperature conversion which requires special formulas */
   private func convertTemperature(value: Float, fromUnit: Text, toUnit: Text) : Float {
-    // Convert to Celsius (base unit) first
     var celsius : Float = 0;
     
     if (fromUnit == "Celsius") {
@@ -135,7 +146,6 @@ actor UnitConverter {
       celsius := value - 273.15;
     };
     
-    // Convert from Celsius to target unit
     if (toUnit == "Celsius") {
       return celsius;
     } else if (toUnit == "Fahrenheit") {
@@ -144,21 +154,19 @@ actor UnitConverter {
       return celsius + 273.15;
     };
     
-    return value; // Default fallback
+    return value;
   };
 
-  // Main conversion function
+  /* Performs unit conversion between different measurement units */
   public query func convert(value: Float, category: Text, fromUnit: Text, toUnit: Text) : async Float {
     if (fromUnit == toUnit) {
-      return value; // No conversion needed
+      return value;
     };
     
-    // Special handling for temperature
     if (category == "Temperature") {
       return convertTemperature(value, fromUnit, toUnit);
     };
     
-    // For other unit categories, use conversion factors
     let units = switch (category) {
       case "Length" { lengthUnits };
       case "Mass" { massUnits };
@@ -168,7 +176,7 @@ actor UnitConverter {
       case "Volume" { volumeUnits };
       case "Energy" { energyUnits };
       case "Pressure" { pressureUnits };
-      case _ { return value }; // Return original value if category not found
+      case _ { return value };
     };
     
     let fromUnitOpt = findUnit(units, fromUnit);
@@ -176,17 +184,16 @@ actor UnitConverter {
     
     switch (fromUnitOpt, toUnitOpt) {
       case (?from, ?to) {
-        // Convert to base unit, then to target unit
         let baseValue = value * from.toBase;
         return baseValue * to.fromBase;
       };
       case _ {
-        return value; // Return original value if units not found
+        return value;
       };
     };
   };
   
-  // Get unit details including abbreviations
+  /* Retrieves both unit names and their abbreviations for a specified category */
   public query func getUnitDetails(category: Text) : async [{ name: Text; abbreviation: Text; }] {
     let units = switch (category) {
       case "Length" { lengthUnits };
@@ -207,14 +214,14 @@ actor UnitConverter {
     );
   };
 
-  // Validate if input value is a valid number
+  /* Determines if an input string represents a valid numerical value */
   public query func validateInput(valueText: Text) : async Bool {
-  for (char in valueText.chars()) {
-    if (not (Char.isDigit(char) or char == '.' or char == '-' or char == 'e' or char == 'E' or char == '+')) {
-      return false;
+    for (char in valueText.chars()) {
+      if (not (Char.isDigit(char) or char == '.' or char == '-' or char == 'e' or char == 'E' or char == '+')) {
+        return false;
+      };
     };
-  };
-  
-  return valueText.size() > 0;
+    
+    return valueText.size() > 0;
   };
 };
