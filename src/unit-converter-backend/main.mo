@@ -5,11 +5,7 @@ import Debug "mo:base/Debug";
 import Char "mo:base/Char";
 
 actor UnitConverter {
-  /* 
-   Unit data structure that defines measurement units with their conversion properties.
-   Contains name, abbreviation, and conversion factors.
-   Offset is primarily used for temperature conversions.
-  */
+
   type Unit = {
     name: Text;
     abbreviation: Text;
