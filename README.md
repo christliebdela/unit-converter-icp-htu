@@ -24,7 +24,7 @@ sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
 Clone the repository and navigate to the project directory:
 
 ```bash
-git clone https://github.com/christliebdela/unit-converter-icp-htu>
+git clone https://github.com/christliebdela/unit-converter-icp-htu
 cd unit-converter/
 ```
 
